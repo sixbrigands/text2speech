@@ -1,9 +1,8 @@
 #Based on script by Alex I. Ramirez @alexram1313
 #https://github.com/alexram1313/text-to-speech-sample
 
+import simpleaudio as sa
 import re
-import wave
-import pyaudio
 import _thread
 import time
 
@@ -42,30 +41,20 @@ class TextToSpeech:
             _thread.start_new_thread( TextToSpeech._play_audio, (pron,delay,))
             delay += 0.145
     
-    #plays wav files using pyaudio
+    #plays wav files using anythingbut pyaudio
     def _play_audio(sound, delay):
         try:
             time.sleep(delay)
-            wf = wave.open("sounds/"+sound+".wav", 'rb')
-            p = pyaudio.PyAudio()
-            stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                            channels=wf.getnchannels(),
-                            rate=wf.getframerate(),
-                            output=True)
-            
-            data = wf.readframes(TextToSpeech.CHUNK)
-            
-            while data:
-                stream.write(data)
-                data = wf.readframes(TextToSpeech.CHUNK)
-        
-            stream.stop_stream()
-            stream.close()
+            with open("sounds/"+sound+".wav", mode = "rb") as audio_data:
+                audio_data = audio_data.read()
+                play_obj = sa.play_buffer(audio_data, 2, 2, 44100)
+                play_obj.wait_done()
+                play_obj.stop()
 
-            p.terminate()
-            return
         except:
             pass
+        
+
     
  
  
