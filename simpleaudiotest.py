@@ -1,21 +1,16 @@
 
 
-import simpleaudio as sa
-import re
-import _thread
-import time
+from pydub import AudioSegment
+from pydub.playback import play
 
 print('hello')
-sound = "AY"
+phoneme1 = "P"
+phoneme2 = "AY"
 delay = .125
 
-time.sleep(delay)
-with open("sounds/"+sound+".wav", mode = "rb") as audio_data:
-    audio_data = audio_data.read()
-    play_obj = sa.play_buffer(audio_data, 2, 2, 44100)
+phoneme1 = AudioSegment.from_wav("sounds/"+phoneme1+".wav")
+phoneme2 = AudioSegment.from_wav("sounds/"+phoneme2+".wav")
 
-    play_obj.wait_done()
+word = phoneme1 + phoneme2
 
-    play_obj.stop()
-
-
+play(word)

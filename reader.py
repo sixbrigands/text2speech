@@ -5,7 +5,8 @@ import simpleaudio as sa
 import re
 import _thread
 import time
-
+from pydub import AudioSegment
+from pydub.playback import play
 class TextToSpeech:
     
     CHUNK = 1024
@@ -29,35 +30,24 @@ class TextToSpeech:
                     self._l[key] = re.findall(r"[A-Z]+",val)
 
     def get_pronunciation(self, str_input):
-        list_pron = []
+        phoneme_list = []
         #the following parses the user input (typed words to be spoken)
         #\w is any alphanumeric character. see https://docs.python.org/3/howto/regex.html
         for word in re.findall(r"[\w']+",str_input.upper()):
             if word in self._l:
-                list_pron += self._l[word]
-        print(list_pron)
-        delay=0
-        for pron in list_pron:
-            _thread.start_new_thread( TextToSpeech._play_audio, (pron,delay,))
-            delay += 0.145
+                phoneme_list += self._l[word]
+        print(phoneme_list)
+        TextToSpeech._play_audio(phoneme_list)
     
     #plays wav files using anythingbut pyaudio
-    def _play_audio(sound, delay):
-        try:
-            time.sleep(delay)
-            with open("sounds/"+sound+".wav", mode = "rb") as audio_data:
-                audio_data = audio_data.read()
-                play_obj = sa.play_buffer(audio_data, 2, 2, 44100)
-                play_obj.wait_done()
-                play_obj.stop()
-
-        except:
-            pass
+    def _play_audio(phoneme_list):
+        full_audio = AudioSegment.empty()
+        for phoneme in phoneme_list:
+            segment = AudioSegment.from_wav("sounds/"+phoneme+".wav")
+            full_audio += segment
         
-
-    
- 
- 
+        play(full_audio)
+        
 
 if __name__ == '__main__':
     tts = TextToSpeech()
