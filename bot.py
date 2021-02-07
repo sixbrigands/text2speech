@@ -12,6 +12,8 @@ option2 = 'sandles'
 actual_option1 = 'Hitler'
 actual_option2 = 'Ghandi'
 
+greetings = {"hi", "hello", "hey", "good morning", "good day", "how's it going", "how are you", "what's up", "wassup"}
+
 client = discord.Client() #create a client instance
 
 @client.event  #registers an event
@@ -19,15 +21,23 @@ async def on_ready(): #on ready called when bot has finish logging in
     print('We have logged in as {0.user}'.format(client)) 
 
 @client.event 
+#Greeting
 async def on_message(message): #called when bot has recieved a message
-    if message.content.startswith('$hello'):
-        if (str(message.author) != 'TheManCallahan#9673'):
-            await message.channel.send("Hello, " + str(message.author)[:-5] + "!")
+    message_string = message.content.lower()
+    if '@Dylan-Bot' in message_string:
+        #if (str(message.author) == 'TheManCallahan#9673'):
+            #await message.channel.send("Hello, Dylan!")
+        if ("(" in message.author.display_name):
+            open_paren = message.author.display_name.index('(') + 1
+            close_paren = message.author.display_name.index(')')
+            await message.channel.send("Hello, " + message.author.display_name[open_paren:close_paren] + "!")
+
         else:
-            await message.channel.send("Hello, Dylan!")
+            await message.channel.send("Hello, " + str(message.author)[:-5] + "!")
+            
 
 
-    if message.content.startswith('~game'):
+    if message.content.startswith('~poll'):
         message = await message.channel.send('React with: \n' + '🌕' + ' for '  + option1 + ', \n' + '🌑' + ' for ' + option2)
         channel = message.channel  
         await message.add_reaction('🌕')
