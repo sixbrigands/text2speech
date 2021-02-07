@@ -37,19 +37,30 @@ class TextToSpeech:
             if word in self._l:
                 phoneme_list += self._l[word]
         print(phoneme_list)
-        TextToSpeech._play_audio(phoneme_list)
+        
+        return phoneme_list
     
     #plays wav files using anythingbut pyaudio
-    def _play_audio(phoneme_list):
+    def make_audio(self, phoneme_list):
         full_audio = AudioSegment.empty()
         for phoneme in phoneme_list:
             segment = AudioSegment.from_wav("sounds/"+phoneme+".wav")
             full_audio += segment
         
-        play(full_audio)
+        return full_audio 
+        
+
+
+    def export_audio(text, audio):
+        full_audio.export("mashup.mp3", format="mp3")
         
 
 if __name__ == '__main__':
     tts = TextToSpeech()
     while True:
-        tts.get_pronunciation(input('Enter a word or phrase: '))
+        user_input = input('Enter a word or phrase: ')
+        phoneme_list = tts.get_pronunciation(user_input)
+        audio = tts.make_audio(phoneme_list)
+        audio.export("/home/dylan/Shared_Folder/words/"+user_input+".wav", format ="wav")
+        play(audio)
+        
