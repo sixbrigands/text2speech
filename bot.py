@@ -20,29 +20,45 @@ def is_greeting(message_string):
             print("Greeting detected")
             return True
     return False
+
+#returns True if string contains listed negative words, else False
+def is_insult(message_string):
+    insults = {"fuck", "shitty", "suck", "damn", "smelly", "hate", "stink", "loser"}
+    for insult in insults:
+        if insult in message_string:
+            print("Meanie Detected")
+            return True
+    return False
 client = discord.Client() #create a client instance
+
+#get author's real name, or Discord handle otherwise
+def get_name(author):
+    if ("(" in author.display_name): #check if nickname has real name, e.g. Themancallahan (Dylan)
+        open_paren = author.display_name.index('(') + 1
+        close_paren = author.display_name.index(')')
+        return author.display_name[open_paren:close_paren]
+    else:
+        return str(author)[:-5]
 
 @client.event  #registers an event
 async def on_ready(): #on ready called when bot has finish logging in
     print('We have logged in as {0.user}'.format(client)) 
 
 @client.event #talk to bot
-async def on_message(ctx): #called when bot has recieved a message
+async def on_message(ctx): #called when bot has recieves a message
     message_string = ctx.content.lower()
-    if '807971461226692649' in message_string: #<@!807971461226692649> == @Dylan-Bot
+    print(message_string)
+    #<@!807971461226692649> == @Dylan-Bot when typed 807972428855771167 == @Dylan-Bot when copied
+    if '807971461226692649' in message_string or '807972428855771167' in message_string: 
+        author = get_name(ctx.author)
+
+        #greetings
         if is_greeting(message_string):
-            #if (str(ctx.author) == 'TheManCallahan#9673'):
-            #await ctx.channel.send("Hello, Dylan!")
-            if ("(" in ctx.author.display_name): #check if nickname has real name, e.g. Themancallahan (Dylan)
-                open_paren = ctx.author.display_name.index('(') + 1
-                close_paren = ctx.author.display_name.index(')')
-                await ctx.channel.send("Hello, " + ctx.author.display_name[open_paren:close_paren] + "!")
-            else:
-                await ctx.channel.send("Hello, " + str(ctx.author)[:-5] + "!")
+                await ctx.channel.send("Hello, " + author + "!")
 
-
-        
-            
+        #insults
+        if is_insult(message_string):
+            await ctx.channel.send("That's not very nice, " + author + ". Lucky for you, I'm not programmed to feel emotion.")
 
 
     if ctx.content.startswith('~poll'):
