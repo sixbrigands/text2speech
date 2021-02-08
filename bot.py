@@ -14,7 +14,7 @@ actual_option2 = 'Ghandi'
 
 #returns True if string contains listed greetings, else False
 def is_greeting(message_string):
-    greetings = {"hi", "hello", "hey", "good morning", "good day", "how's it going", "how are you", "what's up", "wassup"}
+    greetings = {"hi ", " hi!", "hello", " hey ", " hey!", "good morning", "good day", "how's it going", "how are you", "what's up", "wassup", " sup ", "sup,", "sup!", "good evening", "good afternoon", "to meet you", "how've you been", "nice to see you", "long time no see", "ahoy", "howdy"}
     for greeting in greetings:
         if greeting in message_string:
             print("Greeting detected")
