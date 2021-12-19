@@ -5,7 +5,8 @@ import json
 import re
 from discord.utils import get
 from discord.ext import commands
-
+from discord import FFmpegPCMAudio
+from youtube_dl import YoutubeDL
 
 client = discord.Client() #create a client instance
 
@@ -18,9 +19,21 @@ async def play(message):
     print('playing this thing:  ' + url)
     voice_channel = author.voice.channel
     print(voice_channel)
-    vc = await voice_channel.connect()
-    player = await vc.AudioSource(url)
-    player.start()
+    voice_client = await voice_channel.connect()
+
+    YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+    FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+
+    if not voice_client.is_playing():
+        with YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)
+        URL = info['formats'][0]['url']
+        voice_client.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+        voice_client.is_playing()
+    else:
+        await message.send("Already playing song")
+        return
+
 
 #returns True if string contains listed greetings, else False
 def is_greeting(message_string):
