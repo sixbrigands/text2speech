@@ -61,6 +61,6 @@ if __name__ == '__main__':
         user_input = input('Enter a word or phrase: ')
         phoneme_list = tts.get_pronunciation(user_input)
         audio = tts.make_audio(phoneme_list)
-        audio.export("/home/dylan/Shared_Folder/words/"+user_input+".wav", format ="wav")
+        #audio.export("<FILE PATH HERE FOR EXPORT".wav", format ="wav")
         play(audio)
         

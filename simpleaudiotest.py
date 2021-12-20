@@ -5,7 +5,7 @@ from pydub.playback import play
 
 print('hello')
 phoneme1 = "P"
-phoneme2 = "AY"
+phoneme2 = "EY"
 delay = .125
 
 phoneme1 = AudioSegment.from_wav("sounds/"+phoneme1+".wav")
