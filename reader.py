@@ -60,7 +60,10 @@ if __name__ == '__main__':
     while True:
         user_input = input('Enter a word or phrase: ')
         phoneme_list = tts.get_pronunciation(user_input)
-        audio = tts.make_audio(phoneme_list)
-        #audio.export("<FILE PATH HERE FOR EXPORT".wav", format ="wav")
-        play(audio)
+        if len(phoneme_list) > 0:
+            audio = tts.make_audio(phoneme_list)
+            #audio.export("<FILE PATH HERE FOR EXPORT".wav", format ="wav")
+            play(audio)
+        else:
+            print("I couldn't pronounce \"" + user_input + "\"")
         
