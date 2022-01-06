@@ -1,0 +1,1 @@
+#TODO a discord bot that uses the text to speech script
