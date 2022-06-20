@@ -6,7 +6,9 @@ import re
 import _thread
 import time
 from pydub import AudioSegment
-from pydub.playback import play
+# from pydub.playback import play
+import vlc
+
 class TextToSpeech:
     
     CHUNK = 1024
@@ -52,7 +54,7 @@ class TextToSpeech:
 
 
     def export_audio(text, audio):
-        full_audio.export("mashup.mp3", format="mp3")
+        audio.export("mashup.mp3", format="mp3")
         
 
 if __name__ == '__main__':
@@ -62,8 +64,10 @@ if __name__ == '__main__':
         phoneme_list = tts.get_pronunciation(user_input)
         if len(phoneme_list) > 0:
             audio = tts.make_audio(phoneme_list)
-            #audio.export("<FILE PATH HERE FOR EXPORT".wav", format ="wav")
-            play(audio)
+            audio.export("output/output.wav", format ="wav")
+            player = vlc.MediaPlayer("output/output.wav")
+            player.play()
+            # play(audio)
         else:
             print("I couldn't pronounce \"" + user_input + "\"")
         
