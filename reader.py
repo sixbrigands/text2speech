@@ -56,13 +56,11 @@ class TextToSpeech:
                 last_was_diphone = False
                 continue
             phoneme = phoneme_list[i]
-            # Check if 
-            if i+ 1 < len(phoneme_list) and phoneme in self.diphone_dict:
+            if i+ 1 < len(phoneme_list) and phoneme in self.diphone_dict and phoneme_list[i+1] in self.diphone_dict[phoneme]:
                 next_phoneme = phoneme_list[i+1]
-                if next_phoneme in self.diphone_dict[phoneme]:
-                    diphone_file = f"sounds/diphones/{phoneme}_{next_phoneme}.wav"
-                    segment = AudioSegment.from_wav(diphone_file)
-                    last_was_diphone = True
+                diphone_file = f"sounds/diphones/{phoneme}_{next_phoneme}.wav"
+                segment = AudioSegment.from_wav(diphone_file)
+                last_was_diphone = True
             else:
                 phoneme_file = f"sounds/phonemes/{phoneme}.wav"
                 segment = AudioSegment.from_wav(phoneme_file)
