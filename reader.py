@@ -50,15 +50,19 @@ class TextToSpeech:
     #plays wav files using anything but pyaudio
     def make_audio(self, phoneme_list):
         full_audio = AudioSegment.empty()
-        for index_phoneme in enumerate(phoneme_list):
-            i            = index_phoneme[0]
-            phoneme      = index_phoneme[1]
+        last_was_diphone = False
+        for i in range(len(phoneme_list)):
+            if last_was_diphone:
+                last_was_diphone = False
+                continue
+            phoneme = phoneme_list[i]
             # Check if 
             if i+ 1 < len(phoneme_list) and phoneme in self.diphone_dict:
                 next_phoneme = phoneme_list[i+1]
                 if next_phoneme in self.diphone_dict[phoneme]:
                     diphone_file = f"sounds/diphones/{phoneme}_{next_phoneme}.wav"
                     segment = AudioSegment.from_wav(diphone_file)
+                    last_was_diphone = True
             else:
                 phoneme_file = f"sounds/phonemes/{phoneme}.wav"
                 segment = AudioSegment.from_wav(phoneme_file)
