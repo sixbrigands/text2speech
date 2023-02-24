@@ -6,6 +6,7 @@ import re
 import _thread
 import time
 from pydub import AudioSegment
+import os
 # from pydub.playback import play
 import vlc
 
@@ -19,6 +20,9 @@ class TextToSpeech:
     def __init__(self, CMUdict:str = 'CMUdict.txt'):
         self._l = {}
         self._load_words(CMUdict)
+        self.diphone_dict = {}
+        self._load_diphones()
+        
 
     def _load_words(self, CMUdict:str):
         with open(CMUdict, 'r') as file:
@@ -31,6 +35,7 @@ class TextToSpeech:
                     #use regex to parse the phonemes in val
                     self._l[key] = re.findall(r"[A-Z]+",val)
 
+
     def get_pronunciation(self, str_input):
         phoneme_list = []
         #the following parses the user input (typed words to be spoken)
@@ -42,16 +47,35 @@ class TextToSpeech:
         
         return phoneme_list
     
-    #plays wav files using anythingbut pyaudio
+    #plays wav files using anything but pyaudio
     def make_audio(self, phoneme_list):
         full_audio = AudioSegment.empty()
-        for phoneme in phoneme_list:
-            segment = AudioSegment.from_wav("sounds/"+phoneme+".wav")
+        for index_phoneme in enumerate(phoneme_list):
+            i            = index_phoneme[0]
+            phoneme      = index_phoneme[1]
+            # Check if 
+            if i+ 1 < len(phoneme_list) and phoneme in self.diphone_dict:
+                next_phoneme = phoneme_list[i+1]
+                if next_phoneme in self.diphone_dict[phoneme]:
+                    diphone_file = f"sounds/diphones/{phoneme}_{next_phoneme}.wav"
+                    segment = AudioSegment.from_wav(diphone_file)
+            else:
+                phoneme_file = f"sounds/phonemes/{phoneme}.wav"
+                segment = AudioSegment.from_wav(phoneme_file)
             full_audio += segment
         
         return full_audio 
         
-
+    # Load diphones in the dir into a dict with starting consonant as the key and a list of vowels following that consonant as the value    
+    def _load_diphones(self):
+        filename_list = os.listdir("sounds/diphones")
+        for filename in filename_list:
+            string_without_filetype = filename.replace(".wav", "")
+            both_phonemes = string_without_filetype.split("_")
+            if both_phonemes[0] in self.diphone_dict:
+                self.diphone_dict[both_phonemes[0]].append(both_phonemes[1])
+            else:
+                self.diphone_dict[both_phonemes[0]] = [both_phonemes[1]]
 
     def export_audio(text, audio):
         audio.export("mashup.mp3", format="mp3")
